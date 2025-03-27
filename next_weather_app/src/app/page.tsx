@@ -1,8 +1,16 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+// import Image from 'next/image'
+// import styles from './page.module.css'
 import Link from 'next/link'
 
 export default function Home() {
+  const getCurrentWeather = async () => {
+    const res = await fetch(
+      'http://api.weatherapi.com/v1/current.json?key=d10862e40a0d4d6b8cdI*******&q=London&aqi=no'
+    )
+
+    return res.json()
+  }
+
   return (
     <>
       <h1>Hello Next.js</h1>
