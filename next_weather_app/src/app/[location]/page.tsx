@@ -1,32 +1,33 @@
-// import Link from 'next/link'
+import Link from 'next/link'
 import HomeButton from '../components/HomeButton'
+import { getCurrentWeather } from '../utils/getCurrentWeather'
 
 interface Props {
   params: { location: string }
-}
-
-// .env 참조
-const API_KEY = process.env.WEATHER_API_KEY
-
-const getCurrentWeather = async (location: string) => {
-  const res = await fetch(
-    `http://api.weatherapi.com/v1/current.json?key=${API_KEY}&q=${location}&aqi=no`
-  )
-  return res.json()
 }
 
 export default async function Detail({ params }: Props) {
   const { location } = params
   const json = await getCurrentWeather(location)
   console.log(location, json)
-  const { current } = json
 
   const name = location === 'seoul' ? '서울' : location
   return (
     <>
       <h1>Detail Page</h1>
-      <h4>{name}의 3일치 날씨 예보</h4>
-      <p>{current.temp_c}도</p>
+      <h4 style={{ margin: '30px 0 10px 0' }}>{name}의 현재 날씨</h4>
+      <p>기온 : {json.current?.temp_c}도</p>
+      <p>하늘 : {json.current?.condition.text}</p>
+      <h4 style={{ margin: '30px 0 10px 0' }}>{name}의 3일치 날씨 예보</h4>
+      <ul>
+        {json.forecast.forecastday.map((day: any) => (
+          <li key={day.date}>
+            <p>
+              {day.date} : 평균 {day.day.avgtemp_c}도
+            </p>
+          </li>
+        ))}
+      </ul>
       <HomeButton />
     </>
   )

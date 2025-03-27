@@ -3,18 +3,11 @@
 import Link from 'next/link'
 
 export default function Home() {
-  const getCurrentWeather = async () => {
-    const res = await fetch(
-      'http://api.weatherapi.com/v1/current.json?key=d10862e40a0d4d6b8cdI*******&q=London&aqi=no'
-    )
-
-    return res.json()
-  }
-
   return (
     <>
-      <h1>Hello Next.js</h1>
-      <a href="#">바로가기</a>
+      <h1>날씨 알림 웹사이트</h1>
+      <h4 style={{ color: 'lightblue' }}>Hello Next.js</h4>
+
       <ul>
         <li>
           <Link href="/seoul">서울</Link>
