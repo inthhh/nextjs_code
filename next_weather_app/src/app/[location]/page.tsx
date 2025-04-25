@@ -1,33 +1,64 @@
+// "use client" 디렉티브를 추가해서 이 파일이 클라이언트 컴포넌트임을 명시
+'use client'
 import Link from 'next/link'
 import HomeButton from '../components/HomeButton'
 import { getCurrentWeather } from '../utils/getCurrentWeather'
+import { useState, useEffect, use } from 'react'
+import Loading from '../loading'
+import { useParams } from 'next/navigation'
 
-interface Props {
-  params: { location: string }
-}
+// interface Props {
+//   location: string
+// }
 
-export default async function Detail({ params }: Props) {
-  const { location } = params
-  const json = await getCurrentWeather(location)
-  console.log(location, json)
-
+export default function Detail() {
+  // const data = getCurrentWeather(location)
+  const params = useParams()
+  const location = params?.location as string
   const name = location === 'seoul' ? '서울' : location
+  console.log(location)
+  const [loading, setLoading] = useState<boolean>(true)
+  const [data, setData] = useState<any>(null)
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true)
+      const json = await getCurrentWeather(location)
+      setData(json)
+      setLoading(false)
+    }
+
+    fetchData()
+  }, [])
+
   return (
     <>
       <h1>Detail Page</h1>
       <h4 style={{ margin: '30px 0 10px 0' }}>{name}의 현재 날씨</h4>
-      <p>기온 : {json.current?.temp_c}도</p>
-      <p>하늘 : {json.current?.condition.text}</p>
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <p>기온 : {data?.current.temp_c}도</p>
+          <p>하늘 : {data?.current.condition.text}</p>
+        </>
+      )}
       <h4 style={{ margin: '30px 0 10px 0' }}>{name}의 3일치 날씨 예보</h4>
-      <ul>
-        {json.forecast.forecastday.map((day: any) => (
-          <li key={day.date}>
-            <p>
-              {day.date} : 평균 {day.day.avgtemp_c}도
-            </p>
-          </li>
-        ))}
-      </ul>
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <ul>
+            {data?.forecast.forecastday.map((day: any) => (
+              <li key={day.date}>
+                <p>
+                  {day.date} : 평균 {day.day.avgtemp_c}도
+                </p>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
       <HomeButton />
     </>
   )
